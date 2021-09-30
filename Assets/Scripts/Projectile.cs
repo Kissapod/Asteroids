@@ -4,18 +4,17 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-    private float speed;
-    private float cameraSize;
-    public virtual void Start()
+    private float distance;
+
+    private void Update()
     {
-        cameraSize = GameObject.Find("Main Camera").GetComponent<Camera>().orthographicSize;
+        if (distance > Screen.width/2) 
+            Destroy(gameObject);
     }
 
     void FixedUpdate()
     {
-        speed += GetComponent<Rigidbody>().velocity.magnitude;
-        if (speed / 50 > cameraSize*2)
-            Destroy(gameObject);
+        distance += GetComponent<Rigidbody>().velocity.magnitude;
     }
     private void OnTriggerEnter(Collider other)
     {

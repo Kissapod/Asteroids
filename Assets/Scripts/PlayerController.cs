@@ -20,7 +20,6 @@ public class PlayerController : MonoBehaviour
     private Rigidbody rgdbody;
     private float fireTimer;
     private AudioSource audioSource;
-    // Start is called before the first frame update
 
     void Start()
     {
@@ -36,13 +35,9 @@ public class PlayerController : MonoBehaviour
     {
         fireTimer += Time.deltaTime;
         if (GameManager.controlKeyword)
-        {
             KeyControl();
-        }
         else
-        {
             MouseAndKeyControl();
-        }
     }
 
     private void FixedUpdate()
@@ -54,13 +49,11 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.Mouse1))
         {
-            InvokeRepeating("VelocityUpgrade", 0.000001f, 0.01f);
+            InvokeRepeating(nameof(VelocityUpgrade), 0.000001f, 0.01f);
             AudioSource.PlayClipAtPoint(thrustSound, transform.position);
         }
         if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.UpArrow) || Input.GetKeyUp(KeyCode.Mouse1))
-        {
             CancelInvoke("VelocityUpgrade");
-        }
         if (Time.timeScale > 0 && (Input.GetKeyDown(KeyCode.Mouse0) || Input.GetKeyDown(KeyCode.Space)))
             Fire();
         RotationShip(Camera.main.ScreenToWorldPoint(Input.mousePosition));
@@ -74,9 +67,7 @@ public class PlayerController : MonoBehaviour
             audioSource.Play();
         }
         if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.UpArrow))
-        {
             CancelInvoke("VelocityUpgrade");
-        }
         if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
             transform.Rotate(Vector3.forward * rotationSpeed * 100 * Time.deltaTime);
         else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
@@ -88,7 +79,7 @@ public class PlayerController : MonoBehaviour
     void RotationShip(Vector3 target)
     {
         Vector3 direction = (target - transform.position).normalized;
-        float rotZ = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg; //расчитываем угол поворота врага
+        float rotZ = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg; 
         Quaternion rotation = Quaternion.AngleAxis(rotZ + rotationOffset, Vector3.forward);
         transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * rotationSpeed);
     }

@@ -25,7 +25,7 @@ public class GameManager : MonoBehaviour
     private Vector3 rightTop;
     private float timeCreateUFO;
     private float cameraSize;
-    // Start is called before the first frame update
+
     void Start()
     {
         controlKeyword = true;
@@ -87,8 +87,8 @@ public class GameManager : MonoBehaviour
         menu.SetActive(false);
     }
 
-    // Update is called once per frame
-    void Update()
+
+    void LateUpdate()
     {
         if (startGame)
         {
@@ -96,16 +96,19 @@ public class GameManager : MonoBehaviour
             if (destroyObject.Count > 0)
                 destroyObject.RemoveAll(x => x == null);
             GameObject[] asteroids = GameObject.FindGameObjectsWithTag("Asteroid");
+            
             if (asteroids.Length == 0 && asteroidSpawn)
             {
                 asteroidSpawn = false;
                 Invoke(nameof(AsteroidSpawner), 2f);
             }
+            
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 Time.timeScale = 0;
                 menu.SetActive(true);
             }
+            
             if (timer >= timeCreateUFO)
             {
                 timer = 0;

@@ -6,23 +6,22 @@ using UnityEngine.UI;
 public class ScoreKeeper : MonoBehaviour
 {
     public static int score = 0;
-    private Text myText;
-    // Start is called before the first frame update
+    private Text scoreText;
 
     void Start()
     {
-        myText = GetComponent<Text>();
+        scoreText = GetComponent<Text>();
         ResetScore();
     }
     public void Score(int points)
     {
         score += points;
-        myText.text = score.ToString();
+        scoreText.text = score.ToString();
 
     }
     public void ResetScore()
     {
         score = 0;
-        myText.text = score.ToString();
+        scoreText.text = score.ToString();
     }
 }

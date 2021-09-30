@@ -7,19 +7,20 @@ public class HealthController : MonoBehaviour
 {
     public int life;
     public int numberOfLifes;
-    [HideInInspector] public GameObject[] lifes;
     public Sprite fullLife;
     public Sprite emptyLife;
+    public List<GameObject> lifes;
 
     private GameManager gameManager;
-    // Start is called before the first frame update
+
     void Start()
     {
-        lifes = GameObject.FindGameObjectsWithTag("Life");
+        lifes.Add(GameObject.Find("Life 1"));
+        lifes.Add(GameObject.Find("Life 2"));
+        lifes.Add(GameObject.Find("Life 3"));
         gameManager = FindObjectOfType<GameManager>();
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (life <= 0)
@@ -28,7 +29,7 @@ public class HealthController : MonoBehaviour
         }
         if (life > numberOfLifes)
             life = numberOfLifes;
-        for (int i = 0; i < lifes.Length; i++)
+        for (int i = 0; i < lifes.Count; i++)
         {
             if (i < life)
                 lifes[i].GetComponent<Image>().sprite = fullLife;

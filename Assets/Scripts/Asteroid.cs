@@ -13,7 +13,7 @@ public class Asteroid : MonoBehaviour
     public AudioClip explosionSound;
 
     private GameManager gameManager;
-    // Start is called before the first frame update
+
     void Start()
     {
         gameManager = FindObjectOfType<GameManager>();
@@ -21,7 +21,6 @@ public class Asteroid : MonoBehaviour
             currectSpeed = Random.Range(moveSpeed - 1, moveSpeed + 1);
     }
 
-    // Update is called once per frame
     void Update()
     {
         transform.Translate(Vector3.up * currectSpeed * Time.deltaTime);
