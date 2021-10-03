@@ -4,12 +4,14 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public float maxSpeed;
+    public float timeSpawnPlayer = 2f;
+    public float maxSpeed = 10f;
     public float moveSpeed = 5f;
     public float rotationSpeed = 2f;
     public float rotationOffset = -90f;
     public GameObject gun;
     public GameObject projectile;
+    public int shotsPerSeconds = 3;
     public float invulnerabilityTime;
     public AudioClip fireSound;
     public AudioClip thrustSound;
@@ -20,6 +22,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody rgdbody;
     private float fireTimer;
     private AudioSource audioSource;
+    private HealthController health;
 
     void Start()
     {
@@ -27,13 +30,15 @@ public class PlayerController : MonoBehaviour
         gameManager = FindObjectOfType<GameManager>();
         rgdbody = GetComponent<Rigidbody>();
         audioSource = GetComponent<AudioSource>();
+        health = FindObjectOfType<HealthController>();
+        if (shotsPerSeconds <= 0)
+            shotsPerSeconds = 1;
         StartCoroutine(Blinking(bodyShip));
     }
 
     // Update is called once per frame
     void Update()
     {
-        fireTimer += Time.deltaTime;
         if (GameManager.controlKeyword)
             KeyControl();
         else
@@ -42,6 +47,7 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        fireTimer += Time.deltaTime;
         rgdbody.velocity = Vector3.ClampMagnitude(rgdbody.velocity, maxSpeed);
     }
 
@@ -91,22 +97,24 @@ public class PlayerController : MonoBehaviour
 
     void Fire()
     {
-        if (fireTimer > 0.33f)
+        if (fireTimer > 1.0f / shotsPerSeconds)
         {
             fireTimer = 0;
             GameObject createProjectile = Instantiate(projectile, gun.transform.position, Quaternion.identity, gameManager.objectPool.transform);
             createProjectile.GetComponent<Rigidbody>().velocity = transform.rotation * Vector3.up * moveSpeed * 2;
-            gameManager.destroyObject.Add(createProjectile);
+            gameManager.poolObject.Add(createProjectile);
             AudioSource.PlayClipAtPoint(fireSound, transform.position);
         }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        GetComponent<HealthController>().life--;
+        health.life--;
+        health.Update();
         AudioSource.PlayClipAtPoint(thrustSound, transform.position);
         Destroy(other.gameObject);
-        StartCoroutine(Blinking(bodyShip));
+        gameObject.SetActive(false);
+        Invoke(nameof(RespawnPlayer), timeSpawnPlayer);
     }
 
     IEnumerator Blinking(MeshRenderer[] bodyShip)
@@ -141,5 +149,12 @@ public class PlayerController : MonoBehaviour
             body.enabled = true;
         GetComponent<BoxCollider>().enabled = true;
         yield break;
+    }
+
+    void RespawnPlayer()
+    {
+        gameObject.SetActive(true);
+        rgdbody.velocity = Vector3.zero;
+        StartCoroutine(Blinking(bodyShip));
     }
 }

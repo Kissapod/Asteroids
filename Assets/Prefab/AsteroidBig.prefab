@@ -131,8 +131,8 @@ MonoBehaviour:
   asteroid: {fileID: 4362239093558752495, guid: 39c0a4bbdb61d724ca5d0a2b4b263615,
     type: 3}
   moveSpeed: 3
+  degreeSpawnAsteroids: 45
   childAsteroid: 0
-  currectSpeed: 0
   explosionSound: {fileID: 8300000, guid: 879be288ab06ff04eb5c1d3d883aad0d, type: 3}
 --- !u!114 &6053615089817483003
 MonoBehaviour:

@@ -5,23 +5,37 @@ using UnityEngine.UI;
 
 public class HealthController : MonoBehaviour
 {
+    public GameObject scoreAndLifes;
     public int life;
     public int numberOfLifes;
     public Sprite fullLife;
     public Sprite emptyLife;
     public List<GameObject> lifes;
+    [HideInInspector] public int currectLife;
 
     private GameManager gameManager;
 
     void Start()
     {
-        lifes.Add(GameObject.Find("Life 1"));
-        lifes.Add(GameObject.Find("Life 2"));
-        lifes.Add(GameObject.Find("Life 3"));
+        CurrectLifeCounter();
         gameManager = FindObjectOfType<GameManager>();
     }
 
-    void Update()
+    public void CurrectLifeCounter()
+    {
+        currectLife = life;
+        for (int i = 1; i <= numberOfLifes; i++)
+        {
+            lifes.Add(GameObject.Find(string.Format("Life {0}", i)));
+        }
+        for (int i = 0; i < lifes.Count; i++)
+        {
+            if (i > life - 1)
+                lifes[i].SetActive(false);
+        }
+    }
+
+    public void Update()
     {
         if (life <= 0)
         {

@@ -10,11 +10,15 @@ public class GameManager : MonoBehaviour
     public Text controlButtonText;
     public GameObject objectPool;
     public GameObject asteroid;
+    public int amountStartAsteroids = 2;
+    public float timeSpawnAsteroids = 2f;
     public GameObject UFO;
+    public float minTimeSpawnUFO = 20f;
+    public float maxTimeSpawnUFO = 40f;
     public float speedUFO;
     public GameObject player;
-    [HideInInspector] public List<GameObject> destroyObject;
     public static bool controlKeyword;
+    [HideInInspector] public List<GameObject> poolObject;
 
     private int asteroidCounter;
     private bool asteroidSpawn;
@@ -34,16 +38,21 @@ public class GameManager : MonoBehaviour
         continueButton.SetActive(false);
         startGame = false;
         cameraSize = GameObject.Find("Main Camera").GetComponent<Camera>().orthographicSize;
-        timeCreateUFO = Random.Range(20f, 40f);
+        timeCreateUFO = Random.Range(minTimeSpawnUFO, maxTimeSpawnUFO);
+        lifePlayer = GetComponent<HealthController>();
+        lifePlayer.scoreAndLifes.SetActive(false);
+        lifePlayer.enabled = false;
         if (speedUFO <= 0)
             speedUFO = 0.25f;
     }
 
     public void NewGame()
     {
+        lifePlayer.enabled = true;
+        lifePlayer.scoreAndLifes.SetActive(true);
         continueButton.SetActive(true);
         menu.SetActive(false);
-        asteroidCounter = 1;
+        asteroidCounter = amountStartAsteroids;
         asteroidSpawn = false;
         if (!startGame)
         {
@@ -61,13 +70,15 @@ public class GameManager : MonoBehaviour
 
     private void ResetGame()
     {
-        for (int i = 0; i <= destroyObject.Count - 1; i++)
+        for (int i = 0; i <= poolObject.Count - 1; i++)
         {
-            Destroy(destroyObject[i]);
+            Destroy(poolObject[i]);
         }
-        destroyObject.Clear();
-        lifePlayer.life = 3;
+        poolObject.Clear();
+        lifePlayer.life = lifePlayer.currectLife;
         FindObjectOfType<ScoreKeeper>().ResetScore();
+        lifePlayer.scoreAndLifes.SetActive(false);
+        lifePlayer.enabled = false;
         Time.timeScale = 1f;
     }
 
@@ -76,7 +87,7 @@ public class GameManager : MonoBehaviour
         startGame = false;
         menu.SetActive(true);
         continueButton.SetActive(false);
-        asteroidCounter = 1;
+        asteroidCounter = amountStartAsteroids;
         asteroidSpawn = false;
         ResetGame();
     }
@@ -93,14 +104,14 @@ public class GameManager : MonoBehaviour
         if (startGame)
         {
             timer += Time.deltaTime;
-            if (destroyObject.Count > 0)
-                destroyObject.RemoveAll(x => x == null);
+            if (poolObject.Count > 0)
+                poolObject.RemoveAll(x => x == null);
             GameObject[] asteroids = GameObject.FindGameObjectsWithTag("Asteroid");
             
             if (asteroids.Length == 0 && asteroidSpawn)
             {
                 asteroidSpawn = false;
-                Invoke(nameof(AsteroidSpawner), 2f);
+                Invoke(nameof(AsteroidSpawner), timeSpawnAsteroids);
             }
             
             if (Input.GetKeyDown(KeyCode.Escape))
@@ -112,7 +123,7 @@ public class GameManager : MonoBehaviour
             if (timer >= timeCreateUFO)
             {
                 timer = 0;
-                timeCreateUFO = Random.Range(20f, 40f);
+                timeCreateUFO = Random.Range(minTimeSpawnUFO, maxTimeSpawnUFO);
                 SpawnerUFO();
             }
         }
@@ -120,11 +131,11 @@ public class GameManager : MonoBehaviour
 
     void AsteroidSpawner()
     {
-        for (int i = 0; i <= asteroidCounter; i++)
+        for (int i = 0; i < asteroidCounter; i++)
         {
             Vector3 randomPositionVector = new Vector3(Random.Range(leftBot.x, rightTop.x), Random.Range(rightTop.y, leftBot.y), 0);
             GameObject createAsteroid = Instantiate(asteroid, randomPositionVector, Quaternion.Euler(0, 0, Random.Range(0, 359)), objectPool.transform);
-            destroyObject.Add(createAsteroid);
+            poolObject.Add(createAsteroid);
         }
         asteroidCounter++;
         asteroidSpawn = true;
@@ -133,8 +144,7 @@ public class GameManager : MonoBehaviour
     void PlayerSpawner()
     {
         GameObject createPlayer = Instantiate(player, Vector3.zero, Quaternion.identity);
-        lifePlayer = createPlayer.GetComponent<HealthController>();
-        destroyObject.Add(createPlayer);
+        poolObject.Add(createPlayer);
     }
 
     void SpawnerUFO()
@@ -155,7 +165,7 @@ public class GameManager : MonoBehaviour
         Vector3 randomPositionVector = new Vector3(side, Random.Range(cameraSize * -0.8f, cameraSize*0.8f), 0);
         GameObject createUFO = Instantiate(UFO, randomPositionVector, Quaternion.identity, objectPool.transform);
         createUFO.GetComponent<Rigidbody>().AddForce(direction * speedUFO, ForceMode.Impulse);
-        destroyObject.Add(createUFO);
+        poolObject.Add(createUFO);
     }
 
     public void ChangeControl()

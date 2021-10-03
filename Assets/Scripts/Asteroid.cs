@@ -8,17 +8,19 @@ public class Asteroid : MonoBehaviour
     public int score;
     public GameObject asteroid;
     public float moveSpeed;
+    public float degreeSpawnAsteroids = 45f;
     public bool childAsteroid;
-    public float currectSpeed;
     public AudioClip explosionSound;
 
     private GameManager gameManager;
-
+    private float currectSpeed;
     void Start()
     {
         gameManager = FindObjectOfType<GameManager>();
         if (!childAsteroid)
             currectSpeed = Random.Range(moveSpeed - 1, moveSpeed + 1);
+        else
+            currectSpeed = moveSpeed;
     }
 
     void Update()
@@ -33,8 +35,8 @@ public class Asteroid : MonoBehaviour
             if (asteroid != null)
             {
                 float speedCreateAsteroid = Random.Range(moveSpeed - 1, moveSpeed + 1);
-                AsteroidSpawner(45, speedCreateAsteroid);
-                AsteroidSpawner(-45, speedCreateAsteroid);
+                AsteroidSpawner(degreeSpawnAsteroids, speedCreateAsteroid);
+                AsteroidSpawner(-degreeSpawnAsteroids, speedCreateAsteroid);
             }
             FindObjectOfType<ScoreKeeper>().Score(score);
         }
@@ -42,12 +44,12 @@ public class Asteroid : MonoBehaviour
         Destroy(gameObject);
     }
 
-    void AsteroidSpawner(int gradus, float speed)
+    void AsteroidSpawner(float gradus, float speed)
     {
         GameObject createAsteroid = Instantiate(asteroid, transform.position, transform.rotation, gameManager.objectPool.transform);
         createAsteroid.transform.Rotate(0, 0, gradus);
         Asteroid asteroidScript = createAsteroid.GetComponent<Asteroid>();
-        asteroidScript.currectSpeed = speed;
-        gameManager.destroyObject.Add(createAsteroid);
+        asteroidScript.moveSpeed = speed;
+        gameManager.poolObject.Add(createAsteroid);
     }
 }

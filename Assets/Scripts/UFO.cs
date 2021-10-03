@@ -6,6 +6,8 @@ public class UFO : MonoBehaviour
 {
     public int score;
     public GameObject projectile;
+    public float minTimeFire = 2f; 
+    public float maxTimeFire = 5f;
     public float rotationProjectileOffset = -90f;
     public AudioClip fireSound;
     public AudioClip explosionSound;
@@ -16,7 +18,7 @@ public class UFO : MonoBehaviour
     void Start()
     {
         gameManager = FindObjectOfType<GameManager>();
-        timerFire = Random.Range(2f, 5f);
+        timerFire = Random.Range(minTimeFire, maxTimeFire);
     }
 
     void Update()
@@ -25,7 +27,7 @@ public class UFO : MonoBehaviour
         if (timer > timerFire)
         {
             timer = 0;
-            timerFire = Random.Range(2f, 5f);
+            timerFire = Random.Range(minTimeFire, maxTimeFire);
             Fire();
         }
     }
@@ -43,14 +45,17 @@ public class UFO : MonoBehaviour
     void Fire()
     {
         PlayerController player = FindObjectOfType<PlayerController>();
-        Vector3 direction = (player.transform.position - transform.position).normalized; 
-        float rotZ = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        Quaternion rotation = Quaternion.AngleAxis(rotZ + rotationProjectileOffset, Vector3.forward);
-        
-        GameObject createProjectile = Instantiate(projectile, transform.position, Quaternion.identity, gameManager.objectPool.transform);
-        createProjectile.GetComponent<Rigidbody>().velocity = rotation * Vector3.up * player.moveSpeed * 2;
+        if (player)
+        {
+            Vector3 direction = (player.transform.position - transform.position).normalized;
+            float rotZ = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            Quaternion rotation = Quaternion.AngleAxis(rotZ + rotationProjectileOffset, Vector3.forward);
 
-        gameManager.destroyObject.Add(createProjectile);
-        AudioSource.PlayClipAtPoint(fireSound, transform.position);
+            GameObject createProjectile = Instantiate(projectile, transform.position, Quaternion.identity, gameManager.objectPool.transform);
+            createProjectile.GetComponent<Rigidbody>().velocity = rotation * Vector3.up * player.moveSpeed * 2;
+
+            gameManager.poolObject.Add(createProjectile);
+            AudioSource.PlayClipAtPoint(fireSound, transform.position);
+        }
     }
 }

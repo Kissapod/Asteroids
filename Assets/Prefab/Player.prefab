@@ -425,7 +425,6 @@ GameObject:
   - component: {fileID: 6342227975942434939}
   - component: {fileID: 6342227975942434938}
   - component: {fileID: 572556158}
-  - component: {fileID: 408011181}
   - component: {fileID: 8077360233190608861}
   m_Layer: 8
   m_Name: Player
@@ -493,6 +492,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f5cc8b9eda27e3438414349f60d9545, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  timeSpawnPlayer: 2
   maxSpeed: 10
   moveSpeed: 5
   rotationSpeed: 3
@@ -500,10 +500,11 @@ MonoBehaviour:
   gun: {fileID: 36974704875254033}
   projectile: {fileID: 3357169127653496960, guid: efeac1a19ff9be44cbb6c7b3e611cdb9,
     type: 3}
+  shotsPerSeconds: 3
   invulnerabilityTime: 3
   fireSound: {fileID: 8300000, guid: 026d7a7c50ea24f4e958e06e7d8ce6ae, type: 3}
   thrustSound: {fileID: 8300000, guid: 41e16dd51b025b942b346c502b27091f, type: 3}
-  explosionSound: {fileID: 0}
+  explosionSound: {fileID: 8300000, guid: 879be288ab06ff04eb5c1d3d883aad0d, type: 3}
 --- !u!114 &572556158
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -516,23 +517,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 460f143f2790e2340b0a3ad45433677e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &408011181
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6342227975942434936}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b613b78d9106deb48a0ed8cbd4bbbfab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  life: 3
-  numberOfLifes: 3
-  fullLife: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  emptyLife: {fileID: 10917, guid: 0000000000000000f000000000000000, type: 0}
-  lifes: []
 --- !u!82 &8077360233190608861
 AudioSource:
   m_ObjectHideFlags: 0
