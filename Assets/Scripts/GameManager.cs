@@ -29,9 +29,11 @@ public class GameManager : MonoBehaviour
     private Vector3 rightTop;
     private float timeCreateUFO;
     private float cameraSize;
+    private AudioListener audioList;
 
     void Start()
     {
+        audioList = GameObject.Find("Main Camera").GetComponent<AudioListener>();
         controlKeyword = true;
         leftBot = Camera.main.ViewportToWorldPoint(new Vector3(0, 0));
         rightTop = Camera.main.ViewportToWorldPoint(new Vector3(1, 1));
@@ -48,12 +50,17 @@ public class GameManager : MonoBehaviour
 
     public void NewGame()
     {
+        audioList.enabled = true;
+
         lifePlayer.enabled = true;
         lifePlayer.scoreAndLifes.SetActive(true);
+        
         continueButton.SetActive(true);
         menu.SetActive(false);
+        
         asteroidCounter = amountStartAsteroids;
         asteroidSpawn = false;
+        
         if (!startGame)
         {
             PlayerSpawner();
@@ -63,6 +70,8 @@ public class GameManager : MonoBehaviour
         else
         {
             ResetGame();
+            lifePlayer.enabled = true;
+            lifePlayer.scoreAndLifes.SetActive(true);
             PlayerSpawner();
             AsteroidSpawner();
         }
@@ -75,6 +84,7 @@ public class GameManager : MonoBehaviour
             Destroy(poolObject[i]);
         }
         poolObject.Clear();
+        timer = 0;
         lifePlayer.life = lifePlayer.currectLife;
         FindObjectOfType<ScoreKeeper>().ResetScore();
         lifePlayer.scoreAndLifes.SetActive(false);
@@ -95,6 +105,7 @@ public class GameManager : MonoBehaviour
     public void ContinueGame()
     {
         Time.timeScale = 1f;
+        audioList.enabled = true;
         menu.SetActive(false);
     }
 
@@ -116,6 +127,7 @@ public class GameManager : MonoBehaviour
             
             if (Input.GetKeyDown(KeyCode.Escape))
             {
+                audioList.enabled = false;
                 Time.timeScale = 0;
                 menu.SetActive(true);
             }
